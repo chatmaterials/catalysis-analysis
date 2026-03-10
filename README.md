@@ -1,5 +1,7 @@
 # catalysis-analysis
 
+[![CI](https://img.shields.io/github/actions/workflow/status/chatmaterials/catalysis-analysis/ci.yml?branch=main&label=CI)](https://github.com/chatmaterials/catalysis-analysis/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/chatmaterials/catalysis-analysis?display_name=tag)](https://github.com/chatmaterials/catalysis-analysis/releases)
+
 Standalone skill for catalysis-relevant DFT result analysis.
 
 ## Install
