@@ -10,12 +10,36 @@ from analyze_dband_center import analyze as analyze_dband
 from analyze_reaction_barrier import analyze as analyze_barrier
 
 
+def adsorption_regime(energy: float) -> str:
+    if energy <= -1.5:
+        return "strong-binding"
+    if energy >= -0.3:
+        return "weak-binding"
+    return "intermediate-binding"
+
+
+def screening_note(adsorption: dict[str, object], barrier: dict[str, object] | None) -> str:
+    regime = adsorption_regime(float(adsorption["adsorption_energy_eV"]))
+    if barrier is None:
+        return f"Adsorption falls in the `{regime}` regime; add a reaction-path calculation before ranking catalysts."
+    barrier_value = float(barrier["forward_barrier_eV"])
+    if regime == "intermediate-binding" and barrier_value <= 0.8:
+        return "This case looks balanced in the simple descriptor space: intermediate adsorption and a modest forward barrier."
+    if regime == "strong-binding":
+        return "The simple descriptor space suggests strong binding; check whether the surface may be poisoned despite the barrier."
+    if regime == "weak-binding":
+        return "The simple descriptor space suggests weak binding; activity may be limited by reactant capture."
+    return "Adsorption is intermediate, but the barrier remains high enough that kinetics may still dominate."
+
+
 def render_markdown(adsorption: dict[str, object], dband: dict[str, object] | None, barrier: dict[str, object] | None) -> str:
     lines = [
         "# Catalysis Analysis Report",
         "",
         "## Adsorption Energy",
+        f"- Parsed backends: `{', '.join(adsorption['backends'])}`",
         f"- Adsorption energy (eV): `{adsorption['adsorption_energy_eV']:.4f}`",
+        f"- Binding regime: `{adsorption_regime(float(adsorption['adsorption_energy_eV']))}`",
         f"- Slab energy (eV): `{adsorption['slab_energy_eV']:.6f}`",
         f"- Adsorbate energy (eV): `{adsorption['adsorbate_energy_eV']:.6f}`",
         f"- Adsorbed energy (eV): `{adsorption['adsorbed_energy_eV']:.6f}`",
@@ -25,8 +49,10 @@ def render_markdown(adsorption: dict[str, object], dband: dict[str, object] | No
             [
                 "",
                 "## d-band Center",
+                f"- Parsed backend: `{dband['backend']}`",
                 f"- d-band center (eV): `{dband['d_band_center_eV']:.4f}`",
                 f"- Integrated projected weight: `{dband['integrated_weight']:.4f}`",
+                f"- Occupied d-band center (eV): `{dband['occupied_d_band_center_eV']:.4f}`" if dband["occupied_d_band_center_eV"] is not None else "- Occupied d-band center (eV): `n/a`",
             ]
         )
     if barrier is not None:
@@ -34,12 +60,14 @@ def render_markdown(adsorption: dict[str, object], dband: dict[str, object] | No
             [
                 "",
                 "## Reaction Barrier",
+                f"- Parsed backends: `{', '.join(barrier['backends'])}`",
                 f"- Forward barrier (eV): `{barrier['forward_barrier_eV']:.4f}`",
                 f"- Reverse barrier (eV): `{barrier['reverse_barrier_eV']:.4f}`",
                 f"- Reaction energy (eV): `{barrier['reaction_energy_eV']:.4f}`",
                 f"- Highest image: `{barrier['highest_image']}`",
             ]
         )
+    lines.extend(["", "## Screening Note", f"- {screening_note(adsorption, barrier)}"])
     return "\n".join(lines).rstrip() + "\n"
 
 

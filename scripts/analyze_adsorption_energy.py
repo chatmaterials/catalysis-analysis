@@ -4,33 +4,32 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 from pathlib import Path
 
-
-def read_energy(path: Path) -> float:
-    outcar = path / "OUTCAR" if path.is_dir() else path
-    text = outcar.read_text(errors="ignore")
-    matches = re.findall(r"TOTEN\s*=\s*([\-0-9.Ee+]+)", text)
-    if not matches:
-        raise SystemExit(f"No TOTEN found in {outcar}")
-    return float(matches[-1])
+from catalysis_io import read_energy
 
 
 def analyze(slab: Path, adsorbate: Path, adsorbed: Path) -> dict[str, object]:
-    e_slab = read_energy(slab)
-    e_adsorbate = read_energy(adsorbate)
-    e_adsorbed = read_energy(adsorbed)
+    slab_backend, e_slab = read_energy(slab)
+    adsorbate_backend, e_adsorbate = read_energy(adsorbate)
+    adsorbed_backend, e_adsorbed = read_energy(adsorbed)
+    backends = sorted({slab_backend, adsorbate_backend, adsorbed_backend})
     e_ads = e_adsorbed - e_slab - e_adsorbate
+    observations = ["Adsorption energy estimated from slab, adsorbate, and adsorbed total energies."]
+    if len(backends) == 1:
+        observations.append(f"All three states were parsed as {backends[0]}-style results.")
+    else:
+        observations.append("Mixed backends were detected across the reference states.")
     return {
         "slab": str(slab),
         "adsorbate": str(adsorbate),
         "adsorbed": str(adsorbed),
+        "backends": backends,
         "slab_energy_eV": e_slab,
         "adsorbate_energy_eV": e_adsorbate,
         "adsorbed_energy_eV": e_adsorbed,
         "adsorption_energy_eV": e_ads,
-        "observations": ["Adsorption energy estimated from slab, adsorbate, and adsorbed total energies."],
+        "observations": observations,
     }
 
 

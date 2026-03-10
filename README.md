@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/chatmaterials/catalysis-analysis/ci.yml?branch=main&label=CI)](https://github.com/chatmaterials/catalysis-analysis/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/chatmaterials/catalysis-analysis?display_name=tag)](https://github.com/chatmaterials/catalysis-analysis/releases)
 
-Standalone skill for catalysis-relevant DFT result analysis.
+Standalone skill for catalysis-relevant DFT result analysis, now with cross-backend energy support for VASP, QE, and ABINIT-style results.
 
 ## Install
 
@@ -18,6 +18,9 @@ npx skills add . --list
 python3 scripts/analyze_adsorption_energy.py fixtures/slab fixtures/adsorbate fixtures/adsorbed --json
 python3 scripts/analyze_dband_center.py fixtures/projdos --json
 python3 scripts/analyze_reaction_barrier.py fixtures/neb --json
+python3 scripts/analyze_adsorption_energy.py fixtures/qe/slab fixtures/qe/adsorbate fixtures/qe/adsorbed --json
+python3 scripts/analyze_adsorption_energy.py fixtures/abinit/slab fixtures/abinit/adsorbate fixtures/abinit/adsorbed --json
+python3 scripts/compare_catalyst_set.py fixtures fixtures/candidates/strong-bind --json
 python3 scripts/export_catalysis_report.py fixtures/slab fixtures/adsorbate fixtures/adsorbed --projdos-path fixtures/projdos --neb-path fixtures/neb
 python3 scripts/run_regression.py
 ```
