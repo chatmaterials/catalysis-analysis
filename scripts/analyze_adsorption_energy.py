@@ -9,6 +9,14 @@ from pathlib import Path
 from catalysis_io import read_energy
 
 
+def binding_regime(energy: float) -> str:
+    if energy <= -1.5:
+        return "strong-binding"
+    if energy >= -0.3:
+        return "weak-binding"
+    return "intermediate-binding"
+
+
 def analyze(slab: Path, adsorbate: Path, adsorbed: Path) -> dict[str, object]:
     slab_backend, e_slab = read_energy(slab)
     adsorbate_backend, e_adsorbate = read_energy(adsorbate)
@@ -20,6 +28,7 @@ def analyze(slab: Path, adsorbate: Path, adsorbed: Path) -> dict[str, object]:
         observations.append(f"All three states were parsed as {backends[0]}-style results.")
     else:
         observations.append("Mixed backends were detected across the reference states.")
+    regime = binding_regime(e_ads)
     return {
         "slab": str(slab),
         "adsorbate": str(adsorbate),
@@ -29,6 +38,7 @@ def analyze(slab: Path, adsorbate: Path, adsorbed: Path) -> dict[str, object]:
         "adsorbate_energy_eV": e_adsorbate,
         "adsorbed_energy_eV": e_adsorbed,
         "adsorption_energy_eV": e_ads,
+        "binding_regime": regime,
         "observations": observations,
     }
 

@@ -10,16 +10,8 @@ from analyze_dband_center import analyze as analyze_dband
 from analyze_reaction_barrier import analyze as analyze_barrier
 
 
-def adsorption_regime(energy: float) -> str:
-    if energy <= -1.5:
-        return "strong-binding"
-    if energy >= -0.3:
-        return "weak-binding"
-    return "intermediate-binding"
-
-
 def screening_note(adsorption: dict[str, object], barrier: dict[str, object] | None) -> str:
-    regime = adsorption_regime(float(adsorption["adsorption_energy_eV"]))
+    regime = str(adsorption["binding_regime"])
     if barrier is None:
         return f"Adsorption falls in the `{regime}` regime; add a reaction-path calculation before ranking catalysts."
     barrier_value = float(barrier["forward_barrier_eV"])
@@ -39,7 +31,7 @@ def render_markdown(adsorption: dict[str, object], dband: dict[str, object] | No
         "## Adsorption Energy",
         f"- Parsed backends: `{', '.join(adsorption['backends'])}`",
         f"- Adsorption energy (eV): `{adsorption['adsorption_energy_eV']:.4f}`",
-        f"- Binding regime: `{adsorption_regime(float(adsorption['adsorption_energy_eV']))}`",
+        f"- Binding regime: `{adsorption['binding_regime']}`",
         f"- Slab energy (eV): `{adsorption['slab_energy_eV']:.6f}`",
         f"- Adsorbate energy (eV): `{adsorption['adsorbate_energy_eV']:.6f}`",
         f"- Adsorbed energy (eV): `{adsorption['adsorbed_energy_eV']:.6f}`",
@@ -62,6 +54,7 @@ def render_markdown(adsorption: dict[str, object], dband: dict[str, object] | No
                 "## Reaction Barrier",
                 f"- Parsed backends: `{', '.join(barrier['backends'])}`",
                 f"- Forward barrier (eV): `{barrier['forward_barrier_eV']:.4f}`",
+                f"- Kinetic class: `{barrier['kinetic_class']}`",
                 f"- Reverse barrier (eV): `{barrier['reverse_barrier_eV']:.4f}`",
                 f"- Reaction energy (eV): `{barrier['reaction_energy_eV']:.4f}`",
                 f"- Highest image: `{barrier['highest_image']}`",

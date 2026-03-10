@@ -30,12 +30,14 @@ def main() -> None:
     ads = run_json("scripts/analyze_adsorption_energy.py", "fixtures/slab", "fixtures/adsorbate", "fixtures/adsorbed", "--json")
     ensure(abs(ads["adsorption_energy_eV"] + 1.2) < 1e-6, "catalysis-analysis should parse adsorption energy")
     ensure(ads["backends"] == ["vasp"], "catalysis-analysis should identify the VASP backend for the default fixture")
+    ensure(ads["binding_regime"] == "intermediate-binding", "catalysis-analysis should classify the adsorption regime")
     dband = run_json("scripts/analyze_dband_center.py", "fixtures/projdos", "--json")
     ensure(dband["d_band_center_eV"] < 0, "catalysis-analysis should place the d-band center below the Fermi level for the fixture")
     ensure(dband["occupied_d_band_center_eV"] is not None, "catalysis-analysis should compute an occupied d-band center")
     barrier = run_json("scripts/analyze_reaction_barrier.py", "fixtures/neb", "--json")
     ensure(abs(barrier["forward_barrier_eV"] - 0.7) < 1e-6, "catalysis-analysis should parse the forward barrier")
     ensure(barrier["backends"] == ["vasp"], "catalysis-analysis should identify the VASP backend for the default NEB fixture")
+    ensure(barrier["kinetic_class"] == "moderate-like", "catalysis-analysis should classify the barrier kinetics")
     qe_ads = run_json("scripts/analyze_adsorption_energy.py", "fixtures/qe/slab", "fixtures/qe/adsorbate", "fixtures/qe/adsorbed", "--json")
     ensure(abs(qe_ads["adsorption_energy_eV"] + 1.2) < 1e-3, "catalysis-analysis should support QE adsorption-energy inputs")
     abinit_ads = run_json("scripts/analyze_adsorption_energy.py", "fixtures/abinit/slab", "fixtures/abinit/adsorbate", "fixtures/abinit/adsorbed", "--json")
@@ -50,6 +52,25 @@ def main() -> None:
     ensure(abs(abinit_barrier["forward_barrier_eV"] - 0.7) < 1e-3, "catalysis-analysis should support ABINIT NEB-like image sets")
     ranked = run_json("scripts/compare_catalyst_set.py", "fixtures", "fixtures/candidates/strong-bind", "--json")
     ensure(ranked["best_case"] == "fixtures", "catalysis-analysis should rank the balanced fixture ahead of the strong-binding case")
+    selectivity = run_json(
+        "scripts/compare_adsorbate_selectivity.py",
+        "--slab",
+        "fixtures/selectivity/slab",
+        "--adsorbate-a",
+        "fixtures/selectivity/h2",
+        "--adsorbed-a",
+        "fixtures/selectivity/h2_star",
+        "--adsorbate-b",
+        "fixtures/selectivity/co",
+        "--adsorbed-b",
+        "fixtures/selectivity/co_star",
+        "--label-a",
+        "H2",
+        "--label-b",
+        "CO",
+        "--json",
+    )
+    ensure(selectivity["preferred_adsorbate"] == "CO", "catalysis-analysis should identify the more strongly bound adsorbate in the selectivity fixture")
     temp_dir = Path(tempfile.mkdtemp(prefix="catalysis-analysis-report-"))
     try:
         report_path = Path(

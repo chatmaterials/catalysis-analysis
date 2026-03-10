@@ -1,6 +1,6 @@
 ---
 name: "catalysis-analysis"
-description: "Use when the task is to analyze catalysis-relevant quantities from DFT results, including adsorption energies, d-band center estimates, reaction barriers from NEB images, catalyst-set ranking, and compact markdown reports from finished calculations. Supports VASP, QE, and ABINIT-style energy inputs."
+description: "Use when the task is to analyze catalysis-relevant quantities from DFT results, including adsorption energies, d-band center estimates, reaction barriers from NEB images, catalyst-set ranking, adsorption selectivity comparisons, and compact markdown reports from finished calculations. Supports VASP, QE, and ABINIT-style energy inputs."
 ---
 
 # Catalysis Analysis
@@ -13,6 +13,7 @@ Use this skill for catalysis-oriented post-processing rather than generic workfl
 - summarize a simple d-band center from projected DOS data
 - estimate reaction barriers from NEB image sets
 - rank multiple catalyst candidates with a simple adsorption-plus-barrier heuristic
+- compare adsorption selectivity between two adsorbates on the same slab
 - write a compact catalysis-analysis report from existing calculations
 
 Supported backends:
@@ -31,6 +32,8 @@ Supported backends:
   Estimate forward and reverse reaction barriers from a numbered image set.
 - `scripts/compare_catalyst_set.py`
   Rank multiple catalyst cases with a compact adsorption-plus-barrier screening score.
+- `scripts/compare_adsorbate_selectivity.py`
+  Compare two adsorbates on the same slab and summarize the preferred binder.
 - `scripts/export_catalysis_report.py`
   Export a markdown catalysis-analysis report.
 
