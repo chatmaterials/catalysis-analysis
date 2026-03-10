@@ -7,3 +7,4 @@ Use these reminders when interpreting simple DFT post-processing results:
 - a barrier from NEB images should be discussed together with the initial and final state energetics
 - heuristic ranking is useful for screening, but it is not a replacement for microkinetics or coverage effects
 - adsorption selectivity from two endpoints is a compact thermodynamic descriptor, not a full reaction-network selectivity analysis
+- competing-pathway barrier differences are useful selectivity hints, but they still do not replace a full kinetic network

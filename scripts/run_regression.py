@@ -50,7 +50,7 @@ def main() -> None:
     ensure(abs(qe_barrier["forward_barrier_eV"] - 0.7) < 1e-3, "catalysis-analysis should support QE NEB-like image sets")
     abinit_barrier = run_json("scripts/analyze_reaction_barrier.py", "fixtures/abinit/neb", "--json")
     ensure(abs(abinit_barrier["forward_barrier_eV"] - 0.7) < 1e-3, "catalysis-analysis should support ABINIT NEB-like image sets")
-    ranked = run_json("scripts/compare_catalyst_set.py", "fixtures", "fixtures/candidates/strong-bind", "--json")
+    ranked = run_json("scripts/compare_catalyst_set.py", "fixtures", "fixtures/candidates/strong-bind", "--target-dband", "-1.5", "--json")
     ensure(ranked["best_case"] == "fixtures", "catalysis-analysis should rank the balanced fixture ahead of the strong-binding case")
     selectivity = run_json(
         "scripts/compare_adsorbate_selectivity.py",
@@ -71,6 +71,20 @@ def main() -> None:
         "--json",
     )
     ensure(selectivity["preferred_adsorbate"] == "CO", "catalysis-analysis should identify the more strongly bound adsorbate in the selectivity fixture")
+    path_selectivity = run_json(
+        "scripts/compare_reaction_selectivity.py",
+        "--desired-path",
+        "fixtures/pathways/desired",
+        "--undesired-path",
+        "fixtures/pathways/undesired",
+        "--desired-label",
+        "desired",
+        "--undesired-label",
+        "undesired",
+        "--json",
+    )
+    ensure(path_selectivity["preferred_path"] == "desired", "catalysis-analysis should identify the lower-barrier desired pathway")
+    ensure(path_selectivity["selectivity_class"] == "moderately-selective", "catalysis-analysis should classify the pathway selectivity window")
     temp_dir = Path(tempfile.mkdtemp(prefix="catalysis-analysis-report-"))
     try:
         report_path = Path(
