@@ -109,6 +109,22 @@ def main() -> None:
     )
     ensure(path_selectivity["preferred_path"] == "desired", "catalysis-analysis should identify the lower-barrier desired pathway")
     ensure(path_selectivity["selectivity_class"] == "moderately-selective", "catalysis-analysis should classify the pathway selectivity window")
+    site_preference = run_json(
+        "scripts/compare_surface_sites.py",
+        "--slab",
+        "fixtures/sites/slab",
+        "--adsorbate",
+        "fixtures/sites/adsorbate",
+        "--site",
+        "top=fixtures/sites/top",
+        "--site",
+        "bridge=fixtures/sites/bridge",
+        "--site",
+        "hollow=fixtures/sites/hollow",
+        "--json",
+    )
+    ensure(site_preference["preferred_site"] == "hollow", "catalysis-analysis should identify the preferred adsorption site")
+    ensure(site_preference["site_preference_class"] == "moderate-site-preference", "catalysis-analysis should classify the site preference scale")
     temp_dir = Path(tempfile.mkdtemp(prefix="catalysis-analysis-report-"))
     try:
         report_path = Path(

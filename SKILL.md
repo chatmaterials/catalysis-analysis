@@ -15,6 +15,7 @@ Use this skill for catalysis-oriented post-processing rather than generic workfl
 - rank multiple catalyst candidates in balanced, activity, poisoning-resistant, or descriptor modes
 - compare adsorption selectivity between two adsorbates on the same slab
 - compare selectivity between competing reaction pathways
+- compare adsorption preference across multiple surface sites
 - write a compact catalysis-analysis report from existing calculations
 
 Supported backends:
@@ -37,6 +38,8 @@ Supported backends:
   Compare two adsorbates on the same slab and summarize the preferred binder.
 - `scripts/compare_reaction_selectivity.py`
   Compare two competing NEB pathways and summarize the kinetically preferred path.
+- `scripts/compare_surface_sites.py`
+  Compare adsorption energies across multiple sites on the same slab.
 - `scripts/export_catalysis_report.py`
   Export a markdown catalysis-analysis report.
 

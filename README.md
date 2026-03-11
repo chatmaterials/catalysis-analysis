@@ -25,6 +25,7 @@ python3 scripts/compare_catalyst_set.py fixtures fixtures/candidates/strong-bind
 python3 scripts/compare_catalyst_set.py fixtures fixtures/candidates/strong-bind fixtures/candidates/weak-fast --target-dband -1.5 --mode poisoning-resistant --json
 python3 scripts/compare_adsorbate_selectivity.py --slab fixtures/selectivity/slab --adsorbate-a fixtures/selectivity/h2 --adsorbed-a fixtures/selectivity/h2_star --adsorbate-b fixtures/selectivity/co --adsorbed-b fixtures/selectivity/co_star --label-a H2 --label-b CO --json
 python3 scripts/compare_reaction_selectivity.py --desired-path fixtures/pathways/desired --undesired-path fixtures/pathways/undesired --desired-label desired --undesired-label undesired --json
+python3 scripts/compare_surface_sites.py --slab fixtures/sites/slab --adsorbate fixtures/sites/adsorbate --site top=fixtures/sites/top --site bridge=fixtures/sites/bridge --site hollow=fixtures/sites/hollow --json
 python3 scripts/export_catalysis_report.py fixtures/slab fixtures/adsorbate fixtures/adsorbed --projdos-path fixtures/projdos --neb-path fixtures/neb
 python3 scripts/run_regression.py
 ```
