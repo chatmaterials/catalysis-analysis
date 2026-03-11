@@ -8,3 +8,4 @@ Use these reminders when interpreting simple DFT post-processing results:
 - heuristic ranking is useful for screening, but it is not a replacement for microkinetics or coverage effects
 - adsorption selectivity from two endpoints is a compact thermodynamic descriptor, not a full reaction-network selectivity analysis
 - competing-pathway barrier differences are useful selectivity hints, but they still do not replace a full kinetic network
+- Screening mode matters: an activity-first screen and a poisoning-resistant screen can reasonably prefer different catalysts.

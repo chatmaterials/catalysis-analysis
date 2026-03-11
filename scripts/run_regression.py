@@ -50,8 +50,32 @@ def main() -> None:
     ensure(abs(qe_barrier["forward_barrier_eV"] - 0.7) < 1e-3, "catalysis-analysis should support QE NEB-like image sets")
     abinit_barrier = run_json("scripts/analyze_reaction_barrier.py", "fixtures/abinit/neb", "--json")
     ensure(abs(abinit_barrier["forward_barrier_eV"] - 0.7) < 1e-3, "catalysis-analysis should support ABINIT NEB-like image sets")
-    ranked = run_json("scripts/compare_catalyst_set.py", "fixtures", "fixtures/candidates/strong-bind", "--target-dband", "-1.5", "--json")
+    ranked = run_json("scripts/compare_catalyst_set.py", "fixtures", "fixtures/candidates/strong-bind", "--target-dband", "-1.5", "--mode", "balanced", "--json")
     ensure(ranked["best_case"] == "fixtures", "catalysis-analysis should rank the balanced fixture ahead of the strong-binding case")
+    activity_ranked = run_json(
+        "scripts/compare_catalyst_set.py",
+        "fixtures",
+        "fixtures/candidates/strong-bind",
+        "fixtures/candidates/weak-fast",
+        "--target-dband",
+        "-1.5",
+        "--mode",
+        "activity",
+        "--json",
+    )
+    ensure(activity_ranked["best_case"] == "weak-fast", "catalysis-analysis should rank the low-barrier weak-fast catalyst first in activity mode")
+    poisoning_ranked = run_json(
+        "scripts/compare_catalyst_set.py",
+        "fixtures",
+        "fixtures/candidates/strong-bind",
+        "fixtures/candidates/weak-fast",
+        "--target-dband",
+        "-1.5",
+        "--mode",
+        "poisoning-resistant",
+        "--json",
+    )
+    ensure(poisoning_ranked["best_case"] == "weak-fast", "catalysis-analysis should rank the weaker-binding catalyst first in poisoning-resistant mode")
     selectivity = run_json(
         "scripts/compare_adsorbate_selectivity.py",
         "--slab",
